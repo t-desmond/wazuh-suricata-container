@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ARG S6_OVERLAY_VERSION=3.1.6.2
 
 RUN apt-get update && apt-get install -y \
-    curl gnupg xz-utils apt-transport-https iproute2 libmagic1 libyaml-0-2 \
+    curl gnupg xz-utils apt-transport-https iproute2 libmagic1 libyaml-0-2 openssh-server \
     && curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --dearmor -o /usr/share/keyrings/wazuh.gpg \
     && echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" \
         > /etc/apt/sources.list.d/wazuh.list \
