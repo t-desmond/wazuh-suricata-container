@@ -3,8 +3,8 @@ name: Build and Push wazuh-suricata-container
 on:
   push:
     branches: [main]
-    paths:
-      - wazuh-suricata-container/**
+    paths-ignore:
+      - '**/*.md'
   workflow_dispatch:
 
 env:
