@@ -1,0 +1,26 @@
+
+
+services:
+  wazuh-agent:
+    build: .
+    container_name: wazuh-agent
+    restart: unless-stopped
+    environment:
+      - WAZUH_MANAGER=10.165.230.16
+    volumes:
+      - ./volumes/wazuh-agent/sslagent.key:/var/ossec/etc/sslagent.key
+      - ./volumes/wazuh-agent/sslagent.cert:/var/ossec/etc/sslagent.cert
+      - ./volumes/suricata/nmap-detection.rules:/opt/wazuh/suricata/var/lib/suricata/rules/nmap-detection.rules
+    ports:
+      - "2222:22"   # SSH access on host port 2222
+      - 1515:1515
+      - 1514:1514
+    cap_add:
+      - NET_ADMIN     # Needed for Suricata in IDS mode
+      - NET_RAW
+    privileged: true   # Often required for full Suricata + network monitoring
+    # NOTE: network_mode: host is required if you want Suricata to inspect raw traffic
+    # on the host's physical network interface (e.g. eth0). If you omit this (using default bridge mode),
+    # Suricata will only inspect traffic routed to the container's isolated bridge network.
+    # Tradeoff: Host mode breaks network isolation and could cause port conflicts for Wazuh 
+    # agent ports (1514, 1515) if another agent is already running on the host.

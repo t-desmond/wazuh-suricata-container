@@ -1,0 +1,6 @@
+#!/bin/sh
+. /etc/s6-overlay/s6-rc.d/.config-init
+export LD_LIBRARY_PATH=/opt/wazuh/suricata/lib:$LD_LIBRARY_PATH
+rm -f /var/run/suricata.pid
+IFACE=$(ip -o -4 route show to default | awk '{print $5}')
+/opt/wazuh/suricata/bin/suricata -c /etc/suricata/suricata.yaml -i "$IFACE" --pidfile /var/run/suricata.pid
