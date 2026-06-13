@@ -6,7 +6,8 @@ services:
     container_name: wazuh-agent
     restart: unless-stopped
     environment:
-      - WAZUH_MANAGER=10.165.230.16
+      - WAZUH_MANAGER=[IP_ADDRESS] # Change this to your wazuh manager IP address
+      - WAZUH_AGENT_NAME=Ubuntu-Server
     volumes:
       - ./volumes/wazuh-agent/sslagent.key:/var/ossec/etc/sslagent.key
       - ./volumes/wazuh-agent/sslagent.cert:/var/ossec/etc/sslagent.cert

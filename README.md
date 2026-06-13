@@ -15,7 +15,7 @@ Runs a **Wazuh agent** and **Suricata 8.0.2 IDS** side-by-side in a single Docke
 cp /path/to/sslagent.key volumes/wazuh-agent/
 cp /path/to/sslagent.cert volumes/wazuh-agent/
 
-# 2. Set your Wazuh manager IP in compose.yml (WAZUH_MANAGER)
+# 2. Edit compose.yml — set WAZUH_MANAGER and optionally WAZUH_AGENT_NAME
 
 # 3. Build and start
 docker compose up -d
@@ -29,8 +29,9 @@ docker compose exec wazuh-agent wc -l /opt/wazuh/suricata/var/log/suricata/fast.
 
 | Variable | Where | Purpose |
 |---|---|---|
-| `WAZUH_MANAGER` | `compose.yml` environment | Wazuh manager IP or hostname |
-| `volumes/wazuh-agent/ossec.conf` | Bind-mounted | Agent config with `<address>` placeholder |
+| `WAZUH_MANAGER` | `compose.yml` environment | Wazuh manager IP or hostname (required) |
+| `WAZUH_AGENT_NAME` | `compose.yml` environment | Agent name registered on the manager (optional, defaults to `whoami-hostname`) |
+| `volumes/wazuh-agent/ossec.conf` | Bind-mounted | Agent config with `<address>` and `<agent_name>` placeholders |
 | `volumes/suricata/suricata.yaml` | Copied into image at build | Suricata engine config |
 | `volumes/suricata/nmap-detection.rules` | Bind-mounted | Custom rules for detecting nmap scans |
 
@@ -74,7 +75,7 @@ Both processes run as **longrun** services under s6, meaning s6 keeps them alive
 The shared init script:
 
 1. **Imports container env vars** — s6-overlay v3 strips environment from PID1 but stores them as files in `/run/s6/container_environment/`. The script reads them back into shell variables.
-2. **One-time setup with `mkdir` lock** — Substitutes `WAZUH_MANAGER` into `ossec.conf` and fixes ownership of SSL files, guarded by `mkdir` so it only runs once even when both services source it in parallel.
+2. **One-time setup with `mkdir` lock** — Substitutes `WAZUH_MANAGER` and `WAZUH_AGENT_NAME` into `ossec.conf`, then fixes ownership of SSL files. Guarded by `mkdir` so it only runs once even when both services source it in parallel. If `WAZUH_AGENT_NAME` is unset, it falls back to `$(whoami)-$(hostname)`.
 
 ### Suricata
 
