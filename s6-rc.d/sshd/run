@@ -9,10 +9,9 @@ cat > /etc/ssh/sshd_config.d/99-container.conf << EOF
 Port 22
 PermitRootLogin yes
 PasswordAuthentication yes
-UsePAM no
 EOF
 
 ROOT_PASSWORD="${SSH_ROOT_PASSWORD:-wazuh}"
 echo "root:${ROOT_PASSWORD}" | chpasswd
 
-exec /usr/sbin/sshd -D -e
+exec /usr/sbin/sshd -D
