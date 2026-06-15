@@ -5,9 +5,10 @@ if [ -d /run/s6/container_environment ]; then
 fi
 if mkdir /var/ossec/etc/.configure.lock 2>/dev/null; then
     sed -i "s|<address>.*</address>|<address>${WAZUH_MANAGER}</address>|" /var/ossec/etc/ossec.conf
+    sed -i "s|<manager_address>.*</manager_address>|<manager_address>${WAZUH_MANAGER_ADDRESS:-${WAZUH_MANAGER}}</manager_address>|" /var/ossec/etc/ossec.conf
     AGENT_NAME="${WAZUH_AGENT_NAME:-$(whoami)-$(hostname)}"
     sed -i "s|<agent_name>.*</agent_name>|<agent_name>${AGENT_NAME}</agent_name>|" /var/ossec/etc/ossec.conf
-    chown wazuh:wazuh /var/ossec/etc/sslagent.key /var/ossec/etc/sslagent.cert
+    chown -R root:wazuh /var/ossec/etc
     touch /var/ossec/etc/.configured
     rmdir /var/ossec/etc/.configure.lock
 fi
